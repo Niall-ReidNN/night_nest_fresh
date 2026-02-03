@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "669800937615",
+    "project_id": "night-nest-new",
+    "storage_bucket": "night-nest-new.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669800937615:android:6f8975e2313bccc29798fa",
+        "android_client_info": {
+          "package_name": "com.example.night_nest_fresh"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcyZi370iAKPSU9-yKbuFLd4gQUnw83pE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,6 @@
+Placeholder for Privacy Policy 2025 PDF.
+
+Replace this file with the real PDF named exactly:
+  assets/docs/Privacy Policy 2025.pdf
+
+On web this embedded asset will be opened in a new tab. On desktop the file will be downloaded/opened by the browser or default PDF viewer.
