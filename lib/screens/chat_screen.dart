@@ -50,6 +50,7 @@ class _ChatScreenState extends State<ChatScreen> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _typingSub;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _presenceSub;
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
   String? _username;
   Timer? _typingTimer;
@@ -84,6 +85,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _removePresence();
     _clearTypingIndicator();
     _controller.removeListener(_onTextChanged);
+    _focusNode.dispose();
     _scrollController.dispose();
     _controller.dispose();
     super.dispose();
@@ -146,6 +148,22 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     });
+  }
+
+  void _addReaction(int messageIndex, String emoji) {
+    setState(() {
+      final msg = _messages[messageIndex];
+      final updated = {...msg.reactions};
+      updated[emoji] = (updated[emoji] ?? 0) + 1;
+      _messages[messageIndex] = _Message(
+        text: msg.text,
+        isMe: msg.isMe,
+        username: msg.username,
+        timestamp: msg.timestamp,
+        reactions: updated,
+      );
+    });
+  }
   }
 
   bool _moderateMessage(String text) {
@@ -612,44 +630,47 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ); // soft cyan (received)
 
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 3),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Row(
                                 mainAxisAlignment: m.isMe
                                     ? MainAxisAlignment.end
                                     : MainAxisAlignment.start,
                                 children: [
-                                  LayoutBuilder(
-                                    builder: (context, _) {
-                                      final screenWidth = MediaQuery.of(
-                                        context,
-                                      ).size.width;
-                                      final maxWidth = min(
-                                        520.0,
-                                        screenWidth * 0.78,
-                                      );
-                                      final textColor =
-                                          bubbleColor.computeLuminance() > 0.5
-                                          ? Colors.black
-                                          : Colors.white;
-                                      final bool small = screenWidth < 360;
+                                  Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      LayoutBuilder(
+                                        builder: (context, _) {
+                                          final screenWidth = MediaQuery.of(
+                                            context,
+                                          ).size.width;
+                                          final maxWidth = min(
+                                            520.0,
+                                            screenWidth * 0.78,
+                                          );
+                                          final textColor =
+                                              bubbleColor.computeLuminance() > 0.5
+                                              ? Colors.black
+                                              : Colors.white;
+                                          final bool small = screenWidth < 360;
 
-                                      return ConstrainedBox(
-                                        constraints: BoxConstraints(
-                                          maxWidth: maxWidth,
-                                        ),
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(
-                                            color: bubbleColor,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: const Color.fromRGBO(
-                                                  0,
-                                                  0,
-                                                  0,
-                                                  0.08,
-                                                ),
-                                                blurRadius: 8,
-                                                offset: const Offset(0, 4),
+                                          return ConstrainedBox(
+                                            constraints: BoxConstraints(
+                                              maxWidth: maxWidth,
+                                            ),
+                                            child: DecoratedBox(
+                                              decoration: BoxDecoration(
+                                                color: bubbleColor,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: const Color.fromRGBO(
+                                                      0,
+                                                      0,
+                                                      0,
+                                                      0.08,
+                                                    ),
+                                                    blurRadius: 8,
+                                                    offset: const Offset(0, 4),
                                               ),
                                             ],
                                             borderRadius: BorderRadius.only(
@@ -734,12 +755,72 @@ class _ChatScreenState extends State<ChatScreen> {
                                               ],
                                             ),
                                           ),
+                                        );
+                                        },
+                                      ),
+                                      // Reaction buttons below bubble
+                                      Positioned(
+                                        bottom: -15,
+                                        right: m.isMe ? 0 : null,
+                                        left: m.isMe ? null : 0,
+                                        child: GestureDetector(
+                                          onLongPress: () {
+                                            showModalBottomSheet(
+                                              context: context,
+                                              builder: (context) => Container(
+                                                padding: const EdgeInsets.all(16),
+                                                color: const Color(0xFF003A3F),
+                                                child: Wrap(
+                                                  spacing: 12,
+                                                  children: ['👍', '😂', '❤️', '😢', '🔥', '😍']
+                                                      .map(
+                                                        (emoji) => GestureDetector(
+                                                          onTap: () {
+                                                            _addReaction(index, emoji);
+                                                            Navigator.pop(context);
+                                                          },
+                                                          child: Text(
+                                                            emoji,
+                                                            style: const TextStyle(fontSize: 32),
+                                                          ),
+                                                        ),
+                                                      )
+                                                      .toList(),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF003A3F),
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(
+                                                color: Colors.white.withOpacity(0.3),
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                ...m.reactions.entries.map((e) => Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                                                  child: Text('${e.key} ${e.value}', style: const TextStyle(fontSize: 11)),
+                                                )),
+                                                if (m.reactions.isEmpty)
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                                                    child: Text(
+                                                      '+',
+                                                      style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6)),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
                                         ),
-                                      );
-                                    },
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
                             );
                           },
                         ),
@@ -785,6 +866,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       Expanded(
                         child: TextField(
                           controller: _controller,
+                          focusNode: _focusNode,
                           decoration: const InputDecoration(
                             hintText: 'Type a message...',
                           ),
@@ -813,11 +895,14 @@ class _Message {
   final bool isMe;
   final String? username;
   final DateTime timestamp;
+  final Map<String, int> reactions; // emoji -> count
+
   _Message({
     required this.text,
     required this.isMe,
     required this.username,
     required this.timestamp,
+    this.reactions = const {},
   });
 }
 
