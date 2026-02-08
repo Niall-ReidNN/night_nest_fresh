@@ -41,6 +41,8 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: const Color(0xFF003A3F),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -74,7 +76,7 @@ class _MainScreenState extends State<MainScreen> {
                     const SizedBox(height: 20),
                     Wrap(
                       spacing: 12,
-                      runSpacing: 8,
+                      runSpacing: 12,
                       alignment: WrapAlignment.center,
                       children: [
                         ElevatedButton.icon(
@@ -84,6 +86,11 @@ class _MainScreenState extends State<MainScreen> {
                               Navigator.pushNamed(context, '/grounding'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF00E6A8),
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                         ElevatedButton.icon(
@@ -91,18 +98,42 @@ class _MainScreenState extends State<MainScreen> {
                           label: const Text('Journal'),
                           onPressed: () =>
                               Navigator.pushNamed(context, '/journal'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF5EE2D7),
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
                         ElevatedButton.icon(
                           icon: const Icon(Icons.chat_bubble_outline),
                           label: const Text('Chat'),
                           onPressed: () =>
                               Navigator.pushNamed(context, '/chat'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF00D9FF),
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
                         ElevatedButton.icon(
                           icon: const Icon(Icons.insights_outlined),
                           label: const Text('Mood Tracker'),
                           onPressed: () =>
                               Navigator.pushNamed(context, '/mood'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFFB347),
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
                       ],
                     ),

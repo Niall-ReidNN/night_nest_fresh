@@ -85,8 +85,9 @@ class _SavedChatsScreenState extends State<SavedChatsScreen> {
                   title: Text(
                     item,
                     style: const TextStyle(color: Colors.white),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  isThreeLine: true,
                   dense: false,
                   onTap: () {},
                 );

@@ -65,14 +65,49 @@ class _AffirmationScreenState extends State<AffirmationScreen>
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Text(
-              affirmation,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 24,
-                fontStyle: FontStyle.italic,
-                color: Colors.white,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF5EE2D7).withOpacity(0.1),
+                        const Color(0xFF00E6A8).withOpacity(0.1),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color(0xFF5EE2D7).withOpacity(0.3),
+                      width: 2,
+                    ),
+                  ),
+                  child: Text(
+                    affirmation,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      height: 1.5,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                const Text(
+                  'Take a moment to breathe',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white70,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

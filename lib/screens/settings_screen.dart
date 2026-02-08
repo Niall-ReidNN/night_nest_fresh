@@ -194,7 +194,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             // Username Section
             Card(
+              elevation: 4,
               color: Colors.white.withOpacity(0.1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: const Color(0xFF00E6A8).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -217,16 +225,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     TextField(
                       controller: _usernameController,
                       style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Username',
-                        labelStyle: TextStyle(color: Colors.white70),
+                        labelStyle: const TextStyle(color: Colors.white70),
                         hintText: 'Enter your username',
-                        hintStyle: TextStyle(color: Colors.white38),
+                        hintStyle: const TextStyle(color: Colors.white38),
+                        prefixIcon: const Icon(Icons.person, color: Color(0xFF00E6A8)),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white38),
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.white38),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF00E6A8)),
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Color(0xFF00E6A8), width: 2),
                         ),
                       ),
                     ),
@@ -235,6 +246,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onPressed: _saveUsername,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00E6A8),
+                        foregroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: const Text('Save Username'),
                     ),
@@ -246,7 +262,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             // Night Affirmations Section
             Card(
+              elevation: 4,
               color: Colors.white.withOpacity(0.1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: const Color(0xFF5EE2D7).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -267,6 +291,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     const SizedBox(height: 16),
                     SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
                       title: const Text(
                         'Enable notifications',
                         style: TextStyle(color: Colors.white),
@@ -277,6 +302,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         _scheduleNotifications();
                       },
                       activeThumbColor: const Color(0xFF00E6A8),
+                      activeTrackColor: const Color(0xFF00E6A8).withOpacity(0.3),
                     ),
                     if (_notificationsEnabled) ...[
                       const SizedBox(height: 12),

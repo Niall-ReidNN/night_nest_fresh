@@ -139,16 +139,32 @@ class _MoodTrackerScreenState extends State<MoodTrackerScreen> {
                       itemBuilder: (context, i) {
                         final e =
                             _entries[_entries.length - 1 - i]; // newest first
-                        return ListTile(
-                          title: Text(e.text),
-                          subtitle: Text(_formatDateTimeUK(e.timestamp)),
-                          trailing: e.mood != null
-                              ? Chip(
-                                  label: Text(
-                                    '${_moodEmoji[e.mood!] ?? ''} ${e.mood!}',
-                                  ),
-                                )
-                              : null,
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            title: Text(
+                              e.text,
+                              style: const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            subtitle: Text(
+                              _formatDateTimeUK(e.timestamp),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            trailing: e.mood != null
+                                ? Chip(
+                                    backgroundColor: const Color(0xFF5EE2D7),
+                                    label: Text(
+                                      '${_moodEmoji[e.mood!] ?? ''} ${e.mood!}',
+                                      style: const TextStyle(fontWeight: FontWeight.w600),
+                                    ),
+                                  )
+                                : null,
+                          ),
                         );
                       },
                     ),
