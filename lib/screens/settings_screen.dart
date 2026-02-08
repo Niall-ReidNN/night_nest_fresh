@@ -276,7 +276,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         setState(() => _notificationsEnabled = value);
                         _scheduleNotifications();
                       },
-                      activeColor: const Color(0xFF00E6A8),
+                      activeThumbColor: const Color(0xFF00E6A8),
                     ),
                     if (_notificationsEnabled) ...[
                       const SizedBox(height: 12),
@@ -381,6 +381,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ],
                 ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Google AdSense Banner
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.white.withOpacity(0.05),
+              ),
+              padding: const EdgeInsets.all(8),
+              child: HtmlElementView(
+                viewType: 'google-ads-banner',
               ),
             ),
           ],

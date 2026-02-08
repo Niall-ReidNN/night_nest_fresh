@@ -57,57 +57,38 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(
-        0xFF003A3F,
-      ), // Explicitly set background color
-      body: Container(
-        decoration:
-            null, // Remove gradient to ensure background color is applied
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Opacity(
-                  opacity: 0.85,
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.mode(
-                      Colors.white.withAlpha((0.8 * 255).toInt()),
-                      BlendMode.modulate,
-                    ),
-                    child: Image.asset(
-                      'assets/images/night_nest_logo.png',
-                      width: 250,
-                      height: 250,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Image.asset(
-                          'assets/images/night_nest_logo_fix.png',
-                          width: 250,
-                          height: 250,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Image.asset(
-                                'assets/images/night_nest_logo.png',
-                                width: 250,
-                                height: 250,
-                              ),
-                        );
-                      },
-                    ),
+      backgroundColor: const Color(0xFF003A3F),
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Opacity(
+                opacity: 0.85,
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    Colors.white.withAlpha((0.8 * 255).toInt()),
+                    BlendMode.modulate,
+                  ),
+                  child: Image.asset(
+                    'assets/images/night_nest_logo.png',
+                    width: 250,
+                    height: 250,
                   ),
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  _greeting,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 0.5,
-                  ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                _greeting,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 0.5,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

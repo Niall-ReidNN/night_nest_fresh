@@ -3,8 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-// ...existing code...
-// ...existing code...
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -64,16 +62,6 @@ class _MainScreenState extends State<MainScreen> {
                       'assets/images/night_nest_logo.png',
                       width: 220,
                       height: 220,
-                      errorBuilder: (context, error, stack) => Image.asset(
-                        'assets/images/night_nest_logo_fix.png',
-                        width: 220,
-                        height: 220,
-                        errorBuilder: (c, e, s) => Image.asset(
-                          'assets/images/night_nest_logo.png',
-                          width: 220,
-                          height: 220,
-                        ),
-                      ),
                     ),
                     const SizedBox(height: 24),
                     Text(
@@ -97,12 +85,6 @@ class _MainScreenState extends State<MainScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF00E6A8),
                           ),
-                        ),
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.volume_down_outlined),
-                          label: const Text('Ambient Sounds'),
-                          onPressed: () =>
-                              Navigator.pushNamed(context, '/ambient_sounds'),
                         ),
                         ElevatedButton.icon(
                           icon: const Icon(Icons.book_outlined),

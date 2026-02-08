@@ -51,5 +51,23 @@
 	<string>Night Nest needs your location to provide location-based features and support.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Night Nest needs your location to provide location-based features and support.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Night Nest needs microphone access for voice features and recordings.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Night Nest may need camera access for video features.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Night Nest needs access to your photo library.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Night Nest needs calendar access to manage reminders and events.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Night Nest needs access to your health data for wellness tracking.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Night Nest needs to update your health data for wellness tracking.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Night Nest needs local network access.</string>
+	<key>NSBonjourServiceTypes</key>
+	<array>
+		<string>_http._tcp</string>
+	</array>
 </dict>
 </plist>

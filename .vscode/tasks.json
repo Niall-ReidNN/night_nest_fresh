@@ -112,6 +112,13 @@
 			"isBackground": false,
 			"problemMatcher": [],
 			"group": "build"
+		},
+		{
+			"label": "Flutter Web: Run in Safari",
+			"type": "shell",
+			"command": "flutter run -d safari",
+			"isBackground": true,
+			"group": "build"
 		}
 	]
 }

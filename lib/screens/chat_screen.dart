@@ -612,7 +612,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ); // soft cyan (received)
 
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              padding: const EdgeInsets.symmetric(vertical: 3),
                               child: Row(
                                 mainAxisAlignment: m.isMe
                                     ? MainAxisAlignment.end
@@ -669,8 +669,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                           ),
                                           child: Padding(
                                             padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 8,
+                                              horizontal: 8,
+                                              vertical: 5,
                                             ),
                                             child: Column(
                                               crossAxisAlignment: m.isMe
@@ -685,19 +685,19 @@ class _ChatScreenState extends State<ChatScreen> {
                                                   style: TextStyle(
                                                     color: textColor
                                                         .withOpacity(0.95),
-                                                    fontSize: small ? 11 : 12,
+                                                    fontSize: small ? 9 : 10,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
-                                                const SizedBox(height: 4),
+                                                const SizedBox(height: 2),
                                                 Text(
                                                   m.text,
                                                   style: TextStyle(
                                                     color: textColor,
-                                                    fontSize: small ? 14 : 16,
+                                                    fontSize: small ? 12 : 13,
                                                   ),
                                                 ),
-                                                const SizedBox(height: 6),
+                                                const SizedBox(height: 4),
                                                 Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
@@ -709,19 +709,25 @@ class _ChatScreenState extends State<ChatScreen> {
                                                         color: textColor
                                                             .withOpacity(0.85),
                                                         fontSize: small
-                                                            ? 10
-                                                            : 11,
+                                                            ? 8
+                                                            : 9,
                                                       ),
                                                     ),
-                                                    IconButton(
-                                                      icon: Icon(
-                                                        Icons.bookmark_border,
-                                                        color: textColor
-                                                            .withOpacity(0.95),
+                                                    SizedBox(
+                                                      width: 24,
+                                                      height: 24,
+                                                      child: IconButton(
+                                                        padding: EdgeInsets.zero,
+                                                        icon: Icon(
+                                                          Icons.bookmark_border,
+                                                          color: textColor
+                                                              .withOpacity(0.95),
+                                                          size: 16,
+                                                        ),
+                                                        tooltip: 'Save message',
+                                                        onPressed: () =>
+                                                            _saveMessage(m),
                                                       ),
-                                                      tooltip: 'Save message',
-                                                      onPressed: () =>
-                                                          _saveMessage(m),
                                                     ),
                                                   ],
                                                 ),

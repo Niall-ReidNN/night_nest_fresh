@@ -49,7 +49,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '669800937615',
     projectId: 'night-nest-new',
     storageBucket: 'night-nest-new.firebasestorage.app',
-    iosBundleId: 'com.example.nightNestFresh',
+    iosBundleId: 'com.niallconsulting.nightnest', // Update this to your actual bundle ID
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

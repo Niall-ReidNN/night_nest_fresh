@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 
 const _consentKey = 'nightnest_consent_v1';
 const _usernameKey = 'nightnest_username_v1';
-// Local file paths (from attachments). On desktop these will open directly; on web they may fail.
-const _eulaLocalPath =
-    r'd:\Night_Nest\night_nest_new\Night Nest docs\PDF\EULA 2025.pdf';
-const _termsLocalPath =
-    r'd:\Night_Nest\night_nest_new\Night Nest docs\PDF\Terms Of Service 2025.pdf';
-const _privacyLocalPath =
-    r'd:\Night_Nest\night_nest_new\Night Nest docs\PDF\Privacy Policy 2025.pdf';
-
-// asset paths (embedded into app). If you put the real PDFs into assets/docs/ with
-// these exact names they will be opened in-app or in a new browser tab on web.
+const _eulaLocalPath = '';
+const _termsLocalPath = '';
+const _privacyLocalPath = '';
 const _eulaAsset = 'assets/docs/EULA 2025.pdf';
 const _termsAsset = 'assets/docs/Terms Of Service 2025.pdf';
 const _privacyAsset = 'assets/docs/Privacy Policy 2025.pdf';
@@ -149,11 +141,13 @@ class _ConsentScreenState extends State<ConsentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Consent & Terms')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             const Text(
               'Disclaimer',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -201,7 +195,7 @@ class _ConsentScreenState extends State<ConsentScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const Spacer(),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
@@ -309,6 +303,7 @@ class _ConsentScreenState extends State<ConsentScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

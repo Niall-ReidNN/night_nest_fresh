@@ -8,9 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'models/journal_entry.dart';
 import 'firebase_options.dart';
 import 'services/notification_service.dart';
-// shared_preferences imported previously for initial-route checks; no longer
-// needed here because we always show the splash first.
-// import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/splash_screen.dart';
 import 'screens/affirmation_screen.dart';
 import 'screens/journal_screen.dart';
@@ -22,62 +19,57 @@ import 'screens/main_screen.dart';
 import 'screens/globe_screen.dart';
 import 'screens/grounding_screen.dart';
 import 'screens/settings_screen.dart';
-import 'screens/ambient_sounds_screen.dart';
+import 'screens/password_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase (with placeholder config for now)
-  // To use real Firebase: run 'flutterfire configure' to generate proper config
+  // Initialize Firebase
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
     debugPrint('✅ Firebase initialized successfully');
+  } catch (e) {
+    debugPrint('⚠️ Firebase init failed: $e');
+  }
 
-    // Sign in anonymously so we have a uid to store per-user data.
-    try {
-      final cred = await FirebaseAuth.instance.signInAnonymously();
-      final uid = cred.user?.uid;
-      debugPrint('✅ Signed in anonymously: $uid');
+  // Sign in anonymously
+  try {
+    final cred = await FirebaseAuth.instance.signInAnonymously();
+    final uid = cred.user?.uid;
+    debugPrint('✅ Signed in anonymously: $uid');
 
-      // One-time migration: if local SharedPreferences contains journal entries,
-      // upload them to Firestore under /users/{uid}/journal and then clear local cache.
-      if (uid != null) {
-        final prefs = await SharedPreferences.getInstance();
-        final raw = prefs.getString('journal_entries_v1');
-        if (raw != null) {
-          try {
-            final list = json.decode(raw) as List<dynamic>;
-            final coll = FirebaseFirestore.instance
-                .collection('users')
-                .doc(uid)
-                .collection('journal');
-            for (final item in list) {
-              final je = JournalEntry.fromJson(item as Map<String, dynamic>);
-              // write entry; use server timestamp for consistency
-              await coll.add({
-                'text': je.text,
-                'mood': je.mood,
-                'timestamp': je.timestamp.toIso8601String(),
-              });
-            }
-            // clear local storage to avoid duplicates
-            await prefs.remove('journal_entries_v1');
-            debugPrint(
-              '✅ Migrated ${list.length} local journal entries to Firestore',
-            );
-          } catch (e) {
-            debugPrint('⚠️ Migration failed: $e');
+    // One-time migration: upload local journal entries to Firestore
+    if (uid != null) {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('journal_entries_v1');
+      if (raw != null) {
+        try {
+          final list = json.decode(raw) as List<dynamic>;
+          final coll = FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .collection('journal');
+          for (final item in list) {
+            final je = JournalEntry.fromJson(item as Map<String, dynamic>);
+            await coll.add({
+              'text': je.text,
+              'mood': je.mood,
+              'timestamp': je.timestamp.toIso8601String(),
+            });
           }
+          await prefs.remove('journal_entries_v1');
+          debugPrint(
+            '✅ Migrated ${list.length} local journal entries to Firestore',
+          );
+        } catch (e) {
+          debugPrint('⚠️ Migration failed: $e');
         }
       }
-    } catch (e) {
-      debugPrint('⚠️ Anonymous sign-in failed: $e');
     }
   } catch (e) {
-    debugPrint('⚠️ Firebase init failed (using placeholder config): $e');
-    // App continues to work with local storage only
+    debugPrint('⚠️ Anonymous sign-in failed: $e');
   }
 
   // Initialize notification service
@@ -88,9 +80,11 @@ Future<void> main() async {
     debugPrint('⚠️ Notification service init failed: $e');
   }
 
-  // Always start on the splash (welcome) screen. The splash -> affirmation -> consent
-  // flow will navigate forward automatically.
-  runApp(const NightNestApp(initialRoute: '/'));
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('nightnest_authenticated', false);
+  final initialRoute = '/password';
+  
+  runApp(NightNestApp(initialRoute: initialRoute));
 }
 
 class NightNestApp extends StatelessWidget {
@@ -141,6 +135,7 @@ class NightNestApp extends StatelessWidget {
       navigatorObservers: [observer],
       initialRoute: initialRoute,
       routes: {
+        '/password': (context) => const PasswordScreen(),
         '/': (context) => const SplashScreen(),
         '/affirmation': (context) => const AffirmationScreen(),
         '/consent': (context) => const ConsentScreen(),
@@ -151,7 +146,6 @@ class NightNestApp extends StatelessWidget {
         '/globe': (context) => const GlobeScreen(),
         '/mood': (context) => const MoodTrackerScreen(),
         '/grounding': (context) => const GroundingScreen(),
-        '/ambient_sounds': (context) => const AmbientSoundsScreen(),
         '/settings': (context) => const SettingsScreen(),
       },
     );
