@@ -21,6 +21,57 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  void _showReactionPicker(BuildContext context, int messageIndex) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        color: const Color(0xFF003A3F),
+        child: Wrap(
+          spacing: 12,
+          children: ['👍', '😂', '❤️', '😢', '🔥', '😍']
+              .map(
+                (emoji) => GestureDetector(
+                  onTap: () {
+                    _addReaction(messageIndex, emoji);
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    emoji,
+                    style: const TextStyle(fontSize: 32),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addReaction(int messageIndex, String emoji) async {
+    if (messageIndex >= _messages.length) return;
+    final msg = _messages[messageIndex];
+    final coll = FirebaseFirestore.instance
+        .collection('rooms')
+        .doc(widget.roomId)
+        .collection('messages');
+    
+    final snap = await coll
+        .where('timestamp', isEqualTo: Timestamp.fromDate(msg.timestamp))
+        .limit(1)
+        .get();
+    
+    if (snap.docs.isNotEmpty) {
+      final docId = snap.docs.first.id;
+      final docRef = coll.doc(docId);
+      final currentReactions = Map<String, int>.from(msg.reactions);
+      final newCount = (currentReactions[emoji] ?? 0) + 1;
+      currentReactions[emoji] = newCount;
+      
+      await docRef.update({'reactions': currentReactions});
+    }
+  }
+
   // Save a message locally using SharedPreferences
   Future<void> _saveMessage(_Message message) async {
     final prefs = await SharedPreferences.getInstance();
@@ -50,6 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _typingSub;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _presenceSub;
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final ScrollController _scrollController = ScrollController();
   String? _username;
   Timer? _typingTimer;
@@ -84,6 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _removePresence();
     _clearTypingIndicator();
     _controller.removeListener(_onTextChanged);
+    _focusNode.dispose();
     _scrollController.dispose();
     _controller.dispose();
     super.dispose();
@@ -113,6 +166,7 @@ class _ChatScreenState extends State<ChatScreen> {
             'uid': uid,
             'username': username,
             'timestamp': FieldValue.serverTimestamp(),
+            'reactions': {},
           })
           .then((docRef) {
             debugPrint('✅ Message sent successfully: ${docRef.id}');
@@ -233,6 +287,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 final uid = data['uid'] as String?;
                 final username = data['username'] as String?;
                 final isFromMe = myUid == uid;
+                final reactionsData = data['reactions'] as Map<String, dynamic>? ?? {};
+                final reactions = <String, int>{};
+                reactionsData.forEach((key, value) {
+                  reactions[key] = (value as num).toInt();
+                });
                 debugPrint(
                   '  Message from $username (uid: $uid) [${isFromMe ? "ME" : "OTHER"}]: ${data['text']}',
                 );
@@ -245,6 +304,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           ? _username
                           : 'Anonymous'),
                   timestamp: time,
+                  reactions: reactions,
                 );
               })
               // Only keep messages from the last 15 minutes
@@ -283,6 +343,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void _onTextChanged() {
     final text = _controller.text.trim();
     if (text.isNotEmpty) {
+      _focusNode.requestFocus();
       _updateTypingIndicator();
       _typingTimer?.cancel();
       _typingTimer = Timer(const Duration(seconds: 2), () {
@@ -612,13 +673,19 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ); // soft cyan (received)
 
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 3),
-                              child: Row(
-                                mainAxisAlignment: m.isMe
-                                    ? MainAxisAlignment.end
-                                    : MainAxisAlignment.start,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Column(
+                                crossAxisAlignment: m.isMe
+                                    ? CrossAxisAlignment.end
+                                    : CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  LayoutBuilder(
+                                  Row(
+                                    mainAxisAlignment: m.isMe
+                                        ? MainAxisAlignment.end
+                                        : MainAxisAlignment.start,
+                                    children: [
+                                      LayoutBuilder(
                                     builder: (context, _) {
                                       final screenWidth = MediaQuery.of(
                                         context,
@@ -740,7 +807,77 @@ class _ChatScreenState extends State<ChatScreen> {
                                   ),
                                 ],
                               ),
-                            );
+                              if (m.reactions.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4, left: 8, right: 8),
+                                  child: Wrap(
+                                    spacing: 4,
+                                    children: m.reactions.entries
+                                        .map(
+                                          (e) => GestureDetector(
+                                            onLongPress: () => _addReaction(index, e.key),
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 6,
+                                                vertical: 2,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFF003A3F)
+                                                    .withOpacity(0.6),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: Colors.white
+                                                      .withOpacity(0.2),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                '${e.key} ${e.value}',
+                                                style: const TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                ),
+                              GestureDetector(
+                                onLongPress: () => _showReactionPicker(context, index),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    top: 4,
+                                    left: 8,
+                                    right: 8,
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF003A3F)
+                                          .withOpacity(0.4),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity(0.2),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      '+',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.white.withOpacity(0.6),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
                           },
                         ),
                 ),
@@ -785,6 +922,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       Expanded(
                         child: TextField(
                           controller: _controller,
+                          focusNode: _focusNode,
                           decoration: const InputDecoration(
                             hintText: 'Type a message...',
                           ),
@@ -813,11 +951,13 @@ class _Message {
   final bool isMe;
   final String? username;
   final DateTime timestamp;
+  final Map<String, int> reactions; // emoji -> count
   _Message({
     required this.text,
     required this.isMe,
     required this.username,
     required this.timestamp,
+    this.reactions = const {},
   });
 }
 
